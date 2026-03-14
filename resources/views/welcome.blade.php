@@ -34,12 +34,12 @@
               hover:scale-[1.02] active:scale-[0.98]
               transition transform duration-200">
 
-      ▶ Mulai Bermain
+      Mulai Bermain
     </a>
 
     <!-- FOOTER -->
     <p class="mt-6 text-xs text-gray-400">
-      © {{ date('Y') }} Game Rohani • All Rights Reserved
+      © {{ date('Y') }} Game Rohani made by 💗 from Youth people
     </p>
 
   </div>

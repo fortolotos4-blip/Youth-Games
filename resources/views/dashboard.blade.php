@@ -17,7 +17,7 @@
      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
     <div class="text-4xl mb-3">❓</div>
     <h3 class="font-bold text-lg mb-1">Quiz Rohani</h3>
-    <p class="text-sm text-gray-500">Uji pengetahuan imanmu</p>
+    <p class="text-sm text-gray-500">Uji pengetahuan imanmu dengan menjawab soal</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
       Mulai →
     </span>
@@ -27,19 +27,8 @@
   <a href="{{ route('guess.menu') }}"
      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
     <div class="text-4xl mb-3">🖼️</div>
-    <h3 class="font-bold text-lg mb-1">Tebak Gambar</h3>
-    <p class="text-sm text-gray-500">Main sendiri atau bersama</p>
-    <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
-      Mainkan →
-    </span>
-  </a>
-
-  <!-- PUZZLE GAMBAR -->
-  <a href="{{ route('puzzle.index') }}"
-     class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
-    <div class="text-4xl mb-3">🧩</div>
-    <h3 class="font-bold text-lg mb-1">Puzzle</h3>
-    <p class="text-sm text-gray-500">Susun gambar rohani</p>
+    <h3 class="font-bold text-lg mb-1">Kisah Alkitab</h3>
+    <p class="text-sm text-gray-500"> Tebak tokoh dan peristiwa dalam teka teki gambar</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
       Mainkan →
     </span>
@@ -53,10 +42,21 @@
       Teka-Teki Silang Rohani
     </h3>
     <p class="text-sm text-indigo-100">
-      Single Player & Multiplayer
+      Rangkai kata menjadi sebuah kalimat yang utuh
     </p>
     <span class="mt-4 inline-block text-white text-sm font-semibold group-hover:underline">
       Main →
+    </span>
+  </a>
+
+  <!-- PUZZLE GAMBAR -->
+  <a href="{{ route('puzzle.index') }}"
+     class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
+    <div class="text-4xl mb-3">🧩</div>
+    <h3 class="font-bold text-lg mb-1">Puzzle Misterius</h3>
+    <p class="text-sm text-gray-500">Susun kepingan gambar menjadi gambar yang indah</p>
+    <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
+      Mainkan →
     </span>
   </a>
 
@@ -65,7 +65,7 @@
      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
     <div class="text-4xl mb-3">🎁</div>
     <h3 class="font-bold text-lg mb-1">Hadiah Sinterklas</h3>
-    <p class="text-sm text-gray-500">Kejutan spesial</p>
+    <p class="text-sm text-gray-500">Kejutan spesial dari santa untuk kamu</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
       Buka →
     </span>
