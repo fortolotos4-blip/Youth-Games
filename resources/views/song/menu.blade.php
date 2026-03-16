@@ -17,7 +17,7 @@
       <h3 class="font-semibold mb-2">Tim</h3>
       <p class="text-sm text-gray-600">Main bersama tim, bergantian menjawab.</p>
       <div class="mt-4 text-right">
-        <a href="{{ route('song.tim') }}" class="px-4 py-2 bg-red-600 text-white rounded">Main</a>
+        <a href="{{ route('song.team') }}" class="px-4 py-2 bg-red-600 text-white rounded">Main</a>
       </div>
     </div>
 
