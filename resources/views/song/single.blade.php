@@ -70,7 +70,7 @@ x-text="item || '...'">
 <div
 x-show="showPopup"
 x-cloak
-class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
 
 <div class="bg-white p-6 rounded-lg shadow text-center w-80">
 
@@ -102,7 +102,7 @@ OK
 <div
 x-show="finished"
 x-cloak
-class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
 
 <div class="bg-white p-6 rounded-lg shadow text-center w-80">
 
@@ -235,7 +235,7 @@ console.log("USED IDS:", this.usedIds)
 
 fetch("{{ route('song.random') }}",{
 
-credentials: 'same-origin',
+credentials:'same-origin',
 
 method:'POST',
 
@@ -260,30 +260,26 @@ return res.json()
 
 .then(data=>{
 
-if(!data || !data.lyric){
-this.loading=false
-return
-}
+console.log("DATA:", data)
 
-// jika lyric habis
 if(data.finished){
-this.finished=true
-this.loading=false
+this.finished = true
+this.loading = false
 return
 }
 
-// set lyric
 this.result = data.lyric
 this.currentId = data.id
 
 // tampilkan popup
 this.showPopup = true
+
 this.loading = false
 
 })
 
 .catch(err=>{
-console.error('Shuffle error:', err)
+console.error("Shuffle error:", err)
 this.loading=false
 })
 
