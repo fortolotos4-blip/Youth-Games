@@ -16,11 +16,11 @@
 
     <!-- TITLE -->
     <h1 class="text-4xl font-extrabold text-white mb-3 tracking-wide">
-      Game Rohani
+      Youth Games
     </h1>
 
     <p class="text-gray-300 mb-8 text-sm leading-relaxed">
-      Asah pengetahuan imanmu melalui permainan teka-teki silang rohani
+      Asah pengetahuan imanmu melalui berbagai permainan
       yang menantang dan menyenangkan.
     </p>
 

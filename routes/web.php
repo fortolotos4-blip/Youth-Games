@@ -8,6 +8,7 @@ use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\TtsController;
 use App\Http\Controllers\TtsRoomController;
 use App\Http\Controllers\MultiplayerController;
+use App\Http\Controllers\SongController;
 /*
 |--------------------------------------------------------------------------
 | GENERAL
@@ -118,5 +119,16 @@ Route::prefix('multiplayer')->group(function () {
     Route::post('/sticker', [MultiplayerController::class, 'sendSticker']);
 });
 
+/*
+|--------------------------------------------------------------------------
+| SONG
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/surprise', [SongController::class, 'index'])->name('surprise.index');
+
+Route::post('/surprise/random', [SongController::class, 'random'])->name('surprise.random');
+
+Route::post('/surprise/record', [SongController::class, 'record'])->name('surprise.record');
 
 
