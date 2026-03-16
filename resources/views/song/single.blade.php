@@ -56,6 +56,36 @@ Mulai
 
 </div>
 
+<!-- POPUP RULES -->
+
+<div
+x-show="showRules"
+x-cloak
+class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+
+<div class="bg-white p-6 rounded-lg shadow max-w-md text-center">
+
+<h2 class="text-xl font-bold mb-4">
+🎵 Peraturan Sambung Lagu
+</h2>
+
+<div class="text-sm text-gray-700 text-left space-y-2 mb-4">
+
+<p>Nyanyikan sebuah lagu dengan kalimat yang muncul di game, nyanyikan secara bergantian
+
+</div>
+
+<button
+@click="showRules=false"
+class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded">
+
+Ok
+
+</button>
+
+</div>
+
+</div>
 
 <!-- POPUP RESULT -->
 
@@ -191,6 +221,7 @@ display:'🎵',
 
 result:'',
 
+showRules:true,
 loading:false,
 showPopup:false,
 finished:false,
