@@ -176,7 +176,7 @@ startShuffle(){
 
 getRandomLyric(){
 
-fetch("{{ route('surprise.random') }}",{
+fetch("{{ route('song.random') }}",{
 method:'POST',
 headers:{
 'Content-Type':'application/json',
@@ -234,7 +234,7 @@ if(filled){
 
 this.finished=true
 
-fetch("{{ route('surprise.record') }}",{
+fetch("{{ route('song.record') }}",{
 method:'POST',
 headers:{
 'Content-Type':'application/json',
