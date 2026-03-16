@@ -1,26 +1,68 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto p-4">
-  <h2 class="text-2xl mb-4 font-bold"> Sambung Kalimat Lagu</h2>
 
-  <div class="grid grid-cols-2 gap-4">
-    <div class="bg-white p-4 rounded shadow">
-      <h3 class="font-semibold mb-2">Single</h3>
-      <p class="text-sm text-gray-600">Main tanpa batas soal.</p>
-      <div class="mt-4 text-right">
-        <a href="{{ route('song.single') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Main</a>
-      </div>
-    </div>
+<div class="max-w-5xl mx-auto py-10 px-6">
 
-    <div class="bg-white p-4 rounded shadow">
-      <h3 class="font-semibold mb-2">Tim</h3>
-      <p class="text-sm text-gray-600">Main bersama tim, bergantian menjawab.</p>
-      <div class="mt-4 text-right">
-        <a href="{{ route('song.team') }}" class="px-4 py-2 bg-red-600 text-white rounded">Main</a>
-      </div>
-    </div>
+<h1 class="text-3xl font-bold mb-8 text-center">
+Sambung Kalimat Lagu
+</h1>
 
-  </div>
+<div class="grid md:grid-cols-2 gap-8">
+
+<!-- SINGLE -->
+
+<div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition">
+
+<h2 class="text-xl font-bold mb-3">
+Single
+</h2>
+
+<p class="text-gray-600 mb-6">
+Main sendiri tanpa batas soal.
+</p>
+
+<div class="text-center">
+
+<a href="{{ route('song.single') }}"
+class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">
+
+Main
+
+</a>
+
 </div>
+
+</div>
+
+
+<!-- TEAM -->
+
+<div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition">
+
+<h2 class="text-xl font-bold mb-3">
+Team
+</h2>
+
+<p class="text-gray-600 mb-6">
+Main bersama team dan bergantian menjawab sambungan lagu.
+</p>
+
+<div class="text-center">
+
+<a href="{{ route('song.team') }}"
+class="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition">
+
+Main
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 @endsection
