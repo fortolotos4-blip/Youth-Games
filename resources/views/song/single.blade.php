@@ -175,6 +175,10 @@ transform:translate(0,0) rotate(0deg);
 
 }
 
+[x-cloak] {
+display:none !important;
+}
+
 .animate-slot{
 animation:slotIn .45s ease;
 }
@@ -227,6 +231,8 @@ this.getRandomLyric()
 
 getRandomLyric(){
 
+console.log("USED IDS:", this.usedIds)
+
 fetch("{{ route('song.random') }}",{
 
 credentials: 'same-origin',
@@ -259,16 +265,20 @@ this.loading=false
 return
 }
 
-if(data.reset){
-this.usedIds=[]
+// jika lyric habis
+if(data.finished){
+this.finished=true
+this.loading=false
+return
 }
 
+// set lyric
 this.result = data.lyric
 this.currentId = data.id
 
-this.display='🎵'
-this.showPopup=true
-this.loading=false
+// tampilkan popup
+this.showPopup = true
+this.loading = false
 
 })
 
@@ -284,14 +294,15 @@ confirmResult(){
 
 this.showPopup=false
 
+if(!this.usedIds.includes(this.currentId)){
 this.usedIds.push(this.currentId)
+}
 
 for(let i=0;i<this.slots.length;i++){
 
 if(this.slots[i]===''){
 
 this.slots[i]=this.result
-
 break
 
 }
@@ -340,10 +351,25 @@ result:this.slots
 
 resetGame(){
 
-this.slots=['','','']
-this.usedIds=[]
-this.display='🎵'
-this.finished=false
+// reset slot
+this.slots = ['', '', '']
+
+// reset lyric yang sudah dipakai
+this.usedIds = []
+
+// reset hasil terakhir
+this.result = ''
+
+// reset id lyric
+this.currentId = null
+
+// reset status
+this.loading = false
+this.showPopup = false
+this.finished = false
+
+// reset tampilan
+this.display = '🎵'
 
 }
 

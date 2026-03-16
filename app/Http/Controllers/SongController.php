@@ -34,15 +34,9 @@ class SongController extends Controller
                 ->first();
 
     if(!$song){
-
-        $song = SongLyric::inRandomOrder()->first();
-
         return response()->json([
-            'reset' => true,
-            'id' => $song->id,
-            'lyric' => $song->lyric
+            'finished' => true
         ]);
-
     }
 
     return response()->json([
