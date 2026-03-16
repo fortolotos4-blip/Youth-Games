@@ -218,8 +218,6 @@ this.display='🎵'
 
 setTimeout(()=>{
 
-clearInterval(this.shuffleInterval)
-
 this.getRandomLyric()
 
 },2200)
@@ -230,6 +228,8 @@ this.getRandomLyric()
 getRandomLyric(){
 
 fetch("{{ route('song.random') }}",{
+
+credentials: 'same-origin',
 
 method:'POST',
 
@@ -255,6 +255,7 @@ return res.json()
 .then(data=>{
 
 if(!data || !data.lyric){
+this.loading=false
 return
 }
 
@@ -316,6 +317,8 @@ this.finished=true
 fetch("{{ route('song.record') }}",{
 
 method:'POST',
+
+credentials: 'same-origin',
 
 headers:{
 'Content-Type':'application/json',
