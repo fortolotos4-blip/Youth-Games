@@ -71,5 +71,16 @@
     </span>
   </a>
 
+  <!-- SONGS -->
+  <a href="{{ route('song.menu') }}"
+     class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
+    <div class="text-4xl mb-3">🎁</div>
+    <h3 class="font-bold text-lg mb-1">Hadiah Sinterklas</h3>
+    <p class="text-sm text-gray-500">Kejutan spesial dari santa untuk kamu</p>
+    <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
+      Buka →
+    </span>
+  </a>
 </div>
+
 @endsection

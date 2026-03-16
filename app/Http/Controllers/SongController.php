@@ -10,6 +10,11 @@ use App\Models\SongLyric;
 class SongController extends Controller
 {
 
+public function menu()
+    {
+        return view('song.menu');
+    }
+
     public function index()
     {
         return view('song.single');

@@ -125,10 +125,18 @@ Route::prefix('multiplayer')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/surprise', [SongController::class, 'index'])->name('surprise.index');
+Route::prefix('song')->name('song.')->group(function(){
 
-Route::post('/surprise/random', [SongController::class, 'random'])->name('surprise.random');
+    Route::get('/', [SongController::class, 'menu'])->name('menu');
 
-Route::post('/surprise/record', [SongController::class, 'record'])->name('surprise.record');
+    Route::get('/single', [SongController::class, 'index'])->name('single');
+
+    Route::get('/team', [SongController::class, 'team'])->name('team');
+
+    Route::post('/random', [SongController::class, 'random'])->name('random');
+
+    Route::post('/record', [SongController::class, 'record'])->name('record');
+
+});
 
 
