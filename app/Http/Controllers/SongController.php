@@ -24,32 +24,31 @@ class SongController extends Controller
     }
 
     public function random(Request $request)
-    {
+{
 
-        $used = $request->used ?? [];
+    $used = $request->input('used', []);
 
-        $song = SongLyric::whereNotIn('id', $used)
-                    ->inRandomOrder()
-                    ->first();
+    $song = SongLyric::whereNotIn('id', $used)
+                ->inRandomOrder()
+                ->first();
 
-        // jika semua lyric sudah dipakai
-        if(!$song){
+    if(!$song){
 
-            $song = SongLyric::inRandomOrder()->first();
-
-            return response()->json([
-                'reset' => true,
-                'id' => $song->id,
-                'lyric' => $song->lyric
-            ]);
-
-        }
+        $song = SongLyric::inRandomOrder()->first();
 
         return response()->json([
+            'reset' => true,
             'id' => $song->id,
             'lyric' => $song->lyric
         ]);
+
     }
+
+    return response()->json([
+        'id' => $song->id,
+        'lyric' => $song->lyric
+    ]);
+}
 
 
     public function record(Request $request)

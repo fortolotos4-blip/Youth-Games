@@ -227,7 +227,6 @@ this.getRandomLyric()
 },
 
 
-
 getRandomLyric(){
 
 fetch("{{ route('song.random') }}",{
@@ -245,7 +244,14 @@ used:this.usedIds
 })
 
 })
-.then(res=>res.json())
+
+.then(res=>{
+if(!res.ok){
+throw new Error('Network response error')
+}
+return res.json()
+})
+
 .then(data=>{
 
 if(!data || !data.lyric){
@@ -259,20 +265,15 @@ this.usedIds=[]
 this.result = data.lyric
 this.currentId = data.id
 
-this.display = '🎵'
-
-this.showPopup = true
-
-this.loading = false
+this.display='🎵'
+this.showPopup=true
+this.loading=false
 
 })
 
 .catch(err=>{
-
 console.error('Shuffle error:', err)
-
 this.loading=false
-
 })
 
 },
