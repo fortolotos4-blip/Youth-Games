@@ -32,37 +32,29 @@ Mulai
 
 <div class="flex flex-col gap-4">
 
-<template x-for="(item,index) in slots" :key="index">
+    <template x-for="(item,index) in slots" :key="index">
+        <div>
 
-<div
-class="border rounded bg-gray-50 transition-all duration-500 flex items-center justify-center py-6 relative overflow-hidden"
-:class="item ? 'bg-green-100 shadow-md animate-slot' : ''">
+            <div
+            class="border rounded bg-gray-50 transition-all duration-500 flex items-center justify-center py-6 relative overflow-hidden"
+            :class="item ? 'bg-green-100 shadow-md animate-slot' : ''">
 
-<!-- nomor slot -->
+                <div class="absolute left-3 text-sm text-gray-400 font-bold">
+                    <span x-text="index+1"></span>
+                </div>
 
-<div class="absolute left-3 text-sm text-gray-400 font-bold">
+                <div class="text-lg font-semibold text-center"
+                     x-text="item || '...'">
+                </div>
 
-<span x-text="index+1"></span>
+            </div>
 
-</div>
-
-<!-- text lyric -->
-
-<div
-class="text-lg font-semibold text-center"
-x-text="item || '...'">
-</div>
-
-</div>
-
-</template>
+        </div>
+    </template>
 
 </div>
 
 </div>
-
-</div>
-
 
 
 <!-- POPUP RESULT -->
