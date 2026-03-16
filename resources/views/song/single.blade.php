@@ -4,109 +4,157 @@
 
 <div x-data="game()" class="max-w-xl mx-auto">
 
-    <!-- Kotak Shuffle -->
-    <div class="bg-white border rounded-lg p-10 text-center mb-6">
+<!-- SHUFFLE BOX -->
 
-        <h2 
-        class="text-4xl font-bold mb-4 transition-all duration-150"
-        x-text="display"></h2>
+<div class="bg-white border rounded-lg p-10 text-center mb-6">
 
-        <button 
-            @click="startShuffle"
-            :disabled="loading || finished"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded">
+<h2
+class="text-4xl font-bold mb-4 transition-all duration-300"
+x-text="display">
+</h2>
 
-            Mulai
+<button
+@click="startShuffle"
+:disabled="loading || finished"
+class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded text-lg">
 
-        </button>
+Mulai
 
-    </div>
+</button>
+
+</div>
 
 
-    <!-- Slot Jawaban -->
-    <div class="bg-white border rounded-lg p-6">
+<!-- SLOT -->
 
-        <div class="grid grid-cols-3 gap-3">
+<div class="bg-white border rounded-lg p-6">
 
-            <template x-for="(item,index) in slots" :key="index">
+<div class="flex flex-col gap-4">
 
-                <div class="border p-4 rounded text-center bg-gray-50">
+<template x-for="(item,index) in slots" :key="index">
 
-                    <div class="text-xs text-gray-400 mb-1">
-                        <span x-text="'No ' + (index+1)"></span>
-                    </div>
+<div
+class="border rounded bg-gray-50 transition-all duration-500 flex items-center justify-center py-6 relative overflow-hidden"
+:class="item ? 'bg-green-100 shadow-md animate-slot' : ''">
 
-                    <div class="font-semibold text-sm min-h-[20px]" x-text="item"></div>
+<!-- nomor slot -->
 
-                </div>
+<div class="absolute left-3 text-sm text-gray-400 font-bold">
 
-            </template>
+<span x-text="index+1"></span>
 
-        </div>
+</div>
 
-    </div>
+<!-- text lyric -->
+
+<div
+class="text-lg font-semibold text-center"
+x-text="item || '...'">
+</div>
+
+</div>
+
+</template>
+
+</div>
+
+</div>
 
 </div>
 
 
 
-<!-- Popup Hasil -->
-<div 
+<!-- POPUP RESULT -->
+
+<div
 x-show="showPopup"
 x-cloak
 class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 
-    <div class="bg-white p-6 rounded-lg shadow text-center w-80">
+<div class="bg-white p-6 rounded-lg shadow text-center w-80">
 
-        <h3 class="text-lg font-bold mb-4">
-            🎵 Sambung Lagu
-        </h3>
+<h3 class="text-lg font-bold mb-4">
+🎵 Sambung Lagu
+</h3>
 
-        <p class="text-xl font-semibold mb-5" x-text="result"></p>
+<p
+class="text-xl font-semibold mb-5"
+x-text="revealedText">
+</p>
 
-        <button 
-            @click="confirmResult"
-            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+<button
+@click="confirmResult"
+class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
 
-            OK
+OK
 
-        </button>
+</button>
 
-    </div>
+</div>
 
 </div>
 
 
 
-<!-- Popup Game Selesai -->
-<div 
+<!-- POPUP FINISH -->
+
+<div
 x-show="finished"
 x-cloak
 class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 
-    <div class="bg-white p-6 rounded-lg shadow text-center w-80">
+<div class="bg-white p-6 rounded-lg shadow text-center w-80">
 
-        <h3 class="text-xl font-bold text-green-600 mb-3">
-            🎉 Game Selesai
-        </h3>
+<h3 class="text-xl font-bold text-green-600 mb-3">
 
-        <p class="text-gray-600 mb-4">
-            Semua bagian lagu sudah muncul
-        </p>
+🎉 Game Selesai
 
-        <button 
-            @click="resetGame"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+</h3>
 
-            Main Lagi
+<p class="text-gray-600 mb-4">
 
-        </button>
+Semua bagian lagu sudah muncul
 
-    </div>
+</p>
+
+<button
+@click="resetGame"
+class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+
+Main Lagi
+
+</button>
 
 </div>
 
+</div>
 
+<style>
+
+@keyframes slotIn {
+
+0%{
+opacity:0;
+transform:translateY(20px) scale(0.9);
+}
+
+50%{
+opacity:1;
+transform:translateY(-3px) scale(1.05);
+}
+
+100%{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+}
+
+.animate-slot{
+animation:slotIn .45s ease;
+}
+
+</style>
 
 <script>
 
@@ -114,8 +162,10 @@ function game(){
 
 return {
 
-display:'?',
+display:'✨',
+
 result:'',
+revealedText:'',
 
 loading:false,
 showPopup:false,
@@ -123,52 +173,39 @@ finished:false,
 
 shuffleInterval:null,
 
-slots:[
-    '',
-    '',
-    ''
-],
+slots:['','',''],
 
 usedIds:[],
 
 shuffleWords:[
-'🎵',
-'?',
-'...',
-'🎶',
-'🔥',
-'💡',
-'✨'
+'✨','🎵','🔥','🎶','💡','?','...'
 ],
 
 
 
 startShuffle(){
 
-    if(this.loading || this.finished) return
+if(this.loading || this.finished) return
 
-    this.loading = true
+this.loading=true
 
-    let index = 0
+this.shuffleInterval=setInterval(()=>{
 
-    // animasi shuffle teks
-    this.shuffleInterval = setInterval(()=>{
+this.display=this.shuffleWords[
+Math.floor(Math.random()*this.shuffleWords.length)
+]
 
-        this.display = this.shuffleWords[
-            Math.floor(Math.random()*this.shuffleWords.length)
-        ]
-
-    },100)
+},80)
 
 
 
-    setTimeout(()=>{
+setTimeout(()=>{
 
-        clearInterval(this.shuffleInterval)
+clearInterval(this.shuffleInterval)
 
-        this.getRandomLyric()
+this.getRandomLyric()
 
-    },2500)
+},2200)
 
 },
 
@@ -177,27 +214,65 @@ startShuffle(){
 getRandomLyric(){
 
 fetch("{{ route('song.random') }}",{
+
 method:'POST',
+
 headers:{
 'Content-Type':'application/json',
+'Accept':'application/json',
 'X-CSRF-TOKEN':'{{ csrf_token() }}'
 },
+
 body:JSON.stringify({
 used:this.usedIds
 })
+
 })
 .then(res=>res.json())
 .then(data=>{
 
-this.result = data.lyric
-this.currentId = data.id
+if(data.reset){
+this.usedIds=[]
+}
 
-this.display = '🎵'
+this.result=data.lyric
+this.currentId=data.id
 
-this.showPopup = true
-this.loading = false
+this.display='🎵'
+
+this.showPopup=true
+
+this.loading=false
+
+this.revealText()
 
 })
+
+},
+
+
+
+revealText(){
+
+this.revealedText=''
+
+let i=0
+
+let text=this.result
+
+let interval=setInterval(()=>{
+
+this.revealedText+=text[i]
+
+i++
+
+if(i>=text.length){
+
+clearInterval(interval)
+
+}
+
+},40)
 
 },
 
@@ -211,9 +286,10 @@ this.usedIds.push(this.currentId)
 
 for(let i=0;i<this.slots.length;i++){
 
-if(this.slots[i] === ''){
+if(this.slots[i]===''){
 
-this.slots[i] = this.result
+this.slots[i]=this.result
+
 break
 
 }
@@ -228,21 +304,26 @@ this.checkGame()
 
 checkGame(){
 
-let filled = this.slots.every(v => v !== '')
+let filled=this.slots.every(v=>v!=='')
 
 if(filled){
 
 this.finished=true
 
 fetch("{{ route('song.record') }}",{
+
 method:'POST',
+
 headers:{
 'Content-Type':'application/json',
+'Accept':'application/json',
 'X-CSRF-TOKEN':'{{ csrf_token() }}'
 },
+
 body:JSON.stringify({
 result:this.slots
 })
+
 })
 
 }
@@ -253,9 +334,9 @@ result:this.slots
 
 resetGame(){
 
-this.slots = ['','','']
-this.usedIds = []
-this.display='?'
+this.slots=['','','']
+this.usedIds=[]
+this.display='✨'
 this.finished=false
 
 }

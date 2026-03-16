@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SongLyric;
 
-
-
 class SongController extends Controller
 {
 
-public function menu()
+    public function menu()
     {
         return view('song.menu');
     }
@@ -20,27 +18,44 @@ public function menu()
         return view('song.single');
     }
 
+    public function team()
+    {
+        return view('song.team');
+    }
 
-public function random(Request $request)
-{
-    $used = $request->used ?? [];
+    public function random(Request $request)
+    {
 
-    $song = SongLyric::whereNotIn('id',$used)
-            ->inRandomOrder()
-            ->first();
+        $used = $request->used ?? [];
 
-    return response()->json([
-        'id'=>$song->id,
-        'lyric'=>$song->lyric
-    ]);
-}
+        $song = SongLyric::whereNotIn('id', $used)
+                    ->inRandomOrder()
+                    ->first();
+
+        // jika semua lyric sudah dipakai
+        if(!$song){
+
+            $song = SongLyric::inRandomOrder()->first();
+
+            return response()->json([
+                'reset' => true,
+                'id' => $song->id,
+                'lyric' => $song->lyric
+            ]);
+
+        }
+
+        return response()->json([
+            'id' => $song->id,
+            'lyric' => $song->lyric
+        ]);
+    }
 
 
     public function record(Request $request)
     {
         return response()->json([
-            'status' => 'success',
-            'message' => 'Game selesai'
+            'status'=>'success'
         ]);
     }
 
