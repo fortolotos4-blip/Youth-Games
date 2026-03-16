@@ -9,7 +9,8 @@
 <div class="bg-white border rounded-lg p-10 text-center mb-6">
 
 <h2
-class="text-4xl font-bold mb-4 transition-all duration-300"
+class="text-5xl font-bold mb-4 transition-all duration-300"
+:class="loading ? 'music-float' : ''"
 x-text="display">
 </h2>
 
@@ -79,7 +80,7 @@ class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 
 <p
 class="text-xl font-semibold mb-5"
-x-text="revealedText">
+x-text="result">
 </p>
 
 <button
@@ -150,8 +151,36 @@ transform:translateY(0) scale(1);
 
 }
 
+@keyframes musicFloat {
+
+0%{
+transform:translate(0,0) rotate(0deg);
+}
+
+25%{
+transform:translate(-10px,-6px) rotate(-10deg);
+}
+
+50%{
+transform:translate(8px,-10px) rotate(8deg);
+}
+
+75%{
+transform:translate(10px,6px) rotate(-6deg);
+}
+
+100%{
+transform:translate(0,0) rotate(0deg);
+}
+
+}
+
 .animate-slot{
 animation:slotIn .45s ease;
+}
+
+.music-float{
+animation:musicFloat 1.2s ease-in-out infinite;
 }
 
 </style>
@@ -162,24 +191,20 @@ function game(){
 
 return {
 
-display:'✨',
+display:'🎵',
 
 result:'',
-revealedText:'',
 
 loading:false,
 showPopup:false,
 finished:false,
 
+currentId:null,
 shuffleInterval:null,
 
 slots:['','',''],
 
 usedIds:[],
-
-shuffleWords:[
-'✨','🎵','🔥','🎶','💡','?','...'
-],
 
 
 
@@ -189,15 +214,7 @@ if(this.loading || this.finished) return
 
 this.loading=true
 
-this.shuffleInterval=setInterval(()=>{
-
-this.display=this.shuffleWords[
-Math.floor(Math.random()*this.shuffleWords.length)
-]
-
-},80)
-
-
+this.display='🎵'
 
 setTimeout(()=>{
 
@@ -231,51 +248,34 @@ used:this.usedIds
 .then(res=>res.json())
 .then(data=>{
 
+if(!data || !data.lyric){
+return
+}
+
 if(data.reset){
 this.usedIds=[]
 }
 
-this.result=data.lyric
-this.currentId=data.id
+this.result = data.lyric
+this.currentId = data.id
 
-this.display='🎵'
+this.display = '🎵'
 
-this.showPopup=true
+this.showPopup = true
+
+this.loading = false
+
+})
+
+.catch(err=>{
+
+console.error('Shuffle error:', err)
 
 this.loading=false
-
-this.revealText()
 
 })
 
 },
-
-
-
-revealText(){
-
-this.revealedText=''
-
-let i=0
-
-let text=this.result
-
-let interval=setInterval(()=>{
-
-this.revealedText+=text[i]
-
-i++
-
-if(i>=text.length){
-
-clearInterval(interval)
-
-}
-
-},40)
-
-},
-
 
 
 confirmResult(){
@@ -295,6 +295,8 @@ break
 }
 
 }
+
+this.display='🎵'
 
 this.checkGame()
 
@@ -336,7 +338,7 @@ resetGame(){
 
 this.slots=['','','']
 this.usedIds=[]
-this.display='✨'
+this.display='🎵'
 this.finished=false
 
 }
