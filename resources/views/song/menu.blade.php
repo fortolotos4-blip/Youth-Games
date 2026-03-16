@@ -14,7 +14,7 @@ Sambung Kalimat Lagu
 
 <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition">
 
-<h2 class="text-xl font-bold mb-3">
+<h2 class="text-xl font-bold mb-3 text-center">
 Single
 </h2>
 
@@ -40,7 +40,7 @@ Main
 
 <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition">
 
-<h2 class="text-xl font-bold mb-3">
+<h2 class="text-xl font-bold mb-3 text-center">
 Team
 </h2>
 

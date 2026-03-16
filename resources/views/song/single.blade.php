@@ -66,7 +66,7 @@ class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-5
 <div class="bg-white p-6 rounded-lg shadow max-w-md text-center">
 
 <h2 class="text-xl font-bold mb-4">
-🎵 Peraturan Sambung Lagu
+    Peraturan Sambung Lagu
 </h2>
 
 <div class="text-sm text-gray-700 text-left space-y-2 mb-4">
