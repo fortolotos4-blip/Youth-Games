@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\SongLyric;
+use App\SongLyric;
 
 class SongController extends Controller
 {
