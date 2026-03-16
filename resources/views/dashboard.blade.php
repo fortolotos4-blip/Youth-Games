@@ -30,7 +30,7 @@
     <h3 class="font-bold text-lg mb-1">Kisah Alkitab</h3>
     <p class="text-sm text-gray-500"> Tebak tokoh dan peristiwa dalam teka teki gambar</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
-      Mainkan →
+      Main →
     </span>
   </a>
 
@@ -56,7 +56,7 @@
     <h3 class="font-bold text-lg mb-1">Puzzle Misterius</h3>
     <p class="text-sm text-gray-500">Susun kepingan gambar menjadi gambar yang indah</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
-      Mainkan →
+      Main →
     </span>
   </a>
 
@@ -78,7 +78,7 @@
     <h3 class="font-bold text-lg mb-1">Sambung Lagu</h3>
     <p class="text-sm text-gray-500">Sambung lagu dengan kalimat yang ada</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
-      Buka →
+      Mulai →
     </span>
   </a>
 </div>
