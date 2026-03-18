@@ -81,10 +81,9 @@
       Mulai →
     </span>
   </a>
-</div>
 
-<!-- CARI AYAT ALKITAB -->
-  <a href="{{ route('song.menu') }}"
+  <!-- CARI AYAT ALKITAB -->
+  <a href="{{ route('alkitab.menu') }}"
      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
     <div class="text-4xl mb-3">📖</div>
     <h3 class="font-bold text-lg mb-1">Cari Ayat</h3>
@@ -93,5 +92,6 @@
       Mulai →
     </span>
   </a>
+
 </div>
 @endsection
