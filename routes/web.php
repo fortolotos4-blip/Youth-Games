@@ -168,7 +168,7 @@ Route::prefix('alkitab')->group(function () {
 
     // ✅ MENU MULTIPLAYER (ENTRY POINT)
     Route::get('/multiplayer', [BibleController::class, 'multiplayerMenu'])
-        ->name('alkitab.multiplayer.menu');
+        ->name('alkitab.multiplayer-menu');
 
     // ✅ CREATE ROOM
     Route::post('/multiplayer/create', [BibleController::class, 'createRoom']);
