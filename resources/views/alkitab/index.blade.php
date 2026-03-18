@@ -1,26 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div x-data="bibleguessSingle()" x-init="init()">
+<div x-data="bibleguessSingle()" x-init="init()"
+     class="min-h-screen flex items-center justify-center bg-gray-100">
 
   <!-- GAME AREA -->
   <div :class="showSummary ? 'pointer-events-none blur-sm' : ''"
-       class="max-w-3xl mx-auto p-4 transition">
-
-    <!-- TOAST -->
-    <div x-show="toast.show"
-         x-transition
-         class="fixed top-5 right-5 px-4 py-2 rounded shadow-lg text-white text-sm z-50"
-         :class="toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'"
-         x-text="toast.message">
-    </div>
+     class="w-full max-w-xl p-4 transition">
 
     <!-- RULES -->
     <div x-show="showRules" class="fixed inset-0 bg-black/40 flex items-center justify-center">
       <div class="bg-white p-6 rounded w-96">
         <h3 class="text-xl font-bold">Aturan Game</h3>
         <p class="mt-2 text-sm">
-          Tebak ayat, pasal, atau kitab dari potongan ayat.
+          Siapkan Alkitab, lalu cari ayat, pasal, atau kitab dari potongan ayat alkitab.
         </p>
         <div class="text-right mt-4">
           <button @click="start()" class="px-3 py-2 bg-green-600 text-white rounded">
@@ -31,7 +24,7 @@
     </div>
 
     <!-- MAIN -->
-    <div class="bg-white p-4 sm:p-6 rounded shadow max-w-xl mx-auto">
+    <div class="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg w-full">
 
       <!-- MODE SELECTOR -->
       <div class="flex justify-center gap-2 mb-4">
@@ -57,7 +50,7 @@
       <!-- TIMER -->
       <div class="flex justify-between mb-4 text-sm">
         <div>
-          ⏱️ Soal:
+          ⏱️ 
           <b :class="timeLeft <= 5 ? 'text-red-600' : ''" x-text="timeLeft"></b>s
         </div>
         <div>
@@ -67,7 +60,8 @@
       </div>
 
       <!-- SOAL DINAMIS -->
-      <div class="text-center mb-4" x-show="current">
+      <div class="text-center mb-4 border-2 border-gray-200 rounded-xl p-4 bg-gray-50"
+     x-show="current">
 
         <!-- MODE AYAT -->
         <template x-if="mode === 'verse'">
@@ -81,15 +75,16 @@
         <!-- MODE PASAL -->
         <template x-if="mode === 'chapter'">
           <div class="text-2xl font-bold">
-            <span x-text="current.book"></span> ? :
+            <span x-text="current.book"></span> <span class="text-red-600">?</span> :
             <span x-text="current.verse"></span>
           </div>
         </template>
 
         <!-- MODE KITAB -->
         <template x-if="mode === 'book'">
-          <div class="text-2xl font-bold">
-            ? <span x-text="current.chapter"></span> :
+          <div class="text-2xl font-bold"> 
+            <span class="text-red-600">?</span>
+            <span x-text="current.chapter"></span> :
             <span x-text="current.verse"></span>
           </div>
         </template>
@@ -102,12 +97,19 @@
       <!-- INPUT -->
       <div class="flex justify-center mt-4">
         <input
-          :type="mode === 'book' ? 'text' : 'number'"
-          x-model="answer"
-          @keyup.enter="submit()"
-          :disabled="isSubmitting"
-          class="w-40 text-center text-xl border rounded p-2"
-          placeholder="Jawaban..."
+        x-ref="answerInput"
+        :type="mode === 'book' ? 'text' : 'number'"
+        x-model="answer"
+        @input="inputState = ''"
+        @keyup.enter="submit()"
+        :disabled="isSubmitting"
+        :class="[
+            'w-48 sm:w-56 md:w-64 text-center text-lg border-2 rounded-lg p-2 transition',
+            inputState === 'error' ? 'border-red-500 shake bg-red-50' : '',
+            inputState === 'success' ? 'border-green-500 bg-green-50' : '',
+            inputState === '' ? 'border-gray-300' : ''
+        ]"
+        placeholder="Jawaban..."
         />
       </div>
 
@@ -148,12 +150,23 @@
   </div>
 
 </div>
-
+<style>
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}
+}
+.shake {
+  animation: shake 0.25s;
+}
+</style>
 <script>
 function bibleguessSingle(){
   return {
 
     mode: 'verse',
+
+    inputState: '', // '', 'error', 'success'
 
     questions: @json($questions ?? []),
     availableQuestions: [],
@@ -174,7 +187,6 @@ function bibleguessSingle(){
     attempts: [],
     summary: { correct: 0, wrong: 0, total: 0 },
 
-    toast: { show:false, message:'', type:'success' },
 
     init(){
       this.availableQuestions = [...this.questions];
@@ -232,54 +244,81 @@ function bibleguessSingle(){
     },
 
     submit(){
-      if(!this.current || this.isSubmitting) return;
+  if(!this.current || this.isSubmitting) return;
 
-      let answer = this.answer.toString().trim();
+  let answer = this.answer.toString().trim();
 
-      if(this.mode !== 'book'){
-        if(!answer || answer < 1 || answer > 200){
-          this.showToast("Masukkan angka valid", "error");
-          return;
-        }
-      }
+  // VALIDASI
+  if(this.mode !== 'book'){
+    if(!answer || answer < 1 || answer > 200){
+      this.inputState = 'error';
+      return;
+    }
+  }
 
-      this.isSubmitting = true;
-      clearInterval(this.timerId);
+  this.isSubmitting = true;
+  clearInterval(this.timerId);
 
-      fetch("/alkitab/single/answer", {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'X-CSRF-TOKEN':'{{ csrf_token() }}'
-        },
-        body: JSON.stringify({
-          question_id: this.current.id,
-          answer: answer,
-          mode: this.mode
-        })
-      })
-      .then(r=>r.json())
-      .then(data=>{
-        const correct = !!data.correct;
-
-        this.attempts.push({correct});
-
-        if(correct){
-          this.availableQuestions = this.availableQuestions.filter(
-            q => q.id !== this.current.id
-          );
-          this.showToast("Benar!", "success");
-        } else {
-          this.showToast("Salah!", "error");
-        }
-
-        setTimeout(()=>{
-          this.isSubmitting = false;
-          this.pickRandomQuestion();
-          this.startTimer();
-        },600);
-      });
+  fetch("/alkitab/single/answer", {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-CSRF-TOKEN':'{{ csrf_token() }}'
     },
+    body: JSON.stringify({
+      question_id: this.current.id,
+      answer: answer,
+      mode: this.mode
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    const correct = !!data.correct;
+
+    this.attempts.push({correct});
+
+    if(correct){
+      this.inputState = 'success';
+
+      this.availableQuestions = this.availableQuestions.filter(
+        q => q.id !== this.current.id
+      );
+
+      setTimeout(()=>{
+        this.inputState = '';
+        this.isSubmitting = false;
+        this.pickRandomQuestion();
+        this.startTimer();
+      },600);
+
+    } else {
+      // ❌ SALAH
+        this.inputState = '';
+
+        this.$nextTick(() => {
+            this.inputState = 'error';
+        });
+
+        // tampilkan merah sebentar
+        setTimeout(()=>{
+        this.inputState = ''; // hilangkan merah dulu
+        },400);
+
+        // reset + lanjut
+        setTimeout(()=>{
+        this.answer = '';
+        this.isSubmitting = false;
+        this.startTimer();
+
+        this.$refs.answerInput?.focus();
+        },600);
+    }
+  })
+  .catch(()=>{
+    this.isSubmitting = false;
+    this.startTimer();
+  });
+},
 
     skip(){
       clearInterval(this.timerId);
@@ -308,14 +347,6 @@ function bibleguessSingle(){
 
       this.showSummary = true;
     },
-
-    showToast(msg,type){
-      this.toast.message = msg;
-      this.toast.type = type;
-      this.toast.show = true;
-
-      setTimeout(()=> this.toast.show=false,1200);
-    }
 
   }
 }
