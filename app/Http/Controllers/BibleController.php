@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\BibleQuestion;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class BibleController extends Controller
 {
@@ -74,4 +77,53 @@ class BibleController extends Controller
             'correct' => $correct
         ]);
     }
+
+    public function createRoom(Request $request)
+{
+    $code = strtoupper(Str::random(5));
+
+    $roomId = DB::table('bible_rooms')->insertGetId([
+        'code' => $code,
+        'status' => 'waiting'
+    ]);
+
+    $playerId = DB::table('bible_players')->insertGetId([
+        'room_id' => $roomId,
+        'name' => $request->name,
+        'score' => 0,
+        'is_host' => true
+    ]);
+
+    session([
+        'player_id' => $playerId,
+        'player_name' => $request->name
+    ]);
+
+    return redirect("/alkitab/multiplayer/play/$code");
+}
+
+public function joinRoom($code)
+{
+    $room = DB::table('bible_rooms')->where('code', $code)->first();
+
+    if(!$room){
+        return redirect()->back()->with('error', 'Room tidak ditemukan');
+    }
+
+    $name = request()->name ?? session('player_name') ?? 'Player';
+
+    $playerId = DB::table('bible_players')->insertGetId([
+        'room_id' => $room->id,
+        'name' => $name,
+        'score' => 0
+    ]);
+
+    session([
+        'player_id' => $playerId,
+        'player_name' => $name
+    ]);
+
+    return redirect("/alkitab/multiplayer/play/$code");
+}
+
 }

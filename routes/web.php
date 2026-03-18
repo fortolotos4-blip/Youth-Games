@@ -149,6 +149,9 @@ Route::prefix('song')->name('song.')->group(function(){
 
 Route::prefix('alkitab')->group(function () {
 
+    // ========================
+    // MENU & SINGLE
+    // ========================
     Route::get('/menu', [BibleController::class, 'menu'])
         ->name('alkitab.menu');
 
@@ -158,11 +161,33 @@ Route::prefix('alkitab')->group(function () {
     Route::post('/single/answer', [BibleController::class, 'checkAnswer'])
         ->name('alkitab.single.answer');
 
+
+    // ========================
+    // MULTIPLAYER
+    // ========================
+
+    // lobby
     Route::get('/multiplayer', [BibleController::class, 'multiplayerLobby'])
         ->name('alkitab.multiplayer');
 
+    // create room
+    Route::post('/multiplayer/create', [BibleController::class, 'createRoom'])
+        ->name('alkitab.multiplayer.create');
+
+    Route::post('/multiplayer/join/{code}', [BibleController::class, 'joinRoom']);
+
+    // play room
     Route::get('/multiplayer/play/{code}', [BibleController::class, 'multiplayerPlay'])
         ->name('alkitab.multiplayer.play');
+
+    // polling state
+    Route::get('/multiplayer/state/{code}', [BibleController::class, 'state']);
+
+    // answer
+    Route::post('/multiplayer/answer', [BibleController::class, 'answerMultiplayer']);
+
+    // start game (host)
+    Route::post('/multiplayer/start/{code}', [BibleController::class, 'startGame']);
 
 });
 

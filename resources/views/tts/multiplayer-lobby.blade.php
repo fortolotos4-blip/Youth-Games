@@ -23,7 +23,7 @@
 <form method="POST" action="/tts/room/join">
 @csrf
 <input name="player" class="border p-2 w-full mb-2" placeholder="Nama">
-<input name="room_code" class="border p-2 w-full mb-2" placeholder="Kode Room">
+<input name="room_code" class="border p-2 w-full mb-2 uppercase" placeholder="Kode Room">
 <button class="bg-blue-600 text-white w-full py-2">Gabung</button>
 </form>
 
