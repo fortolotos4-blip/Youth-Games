@@ -44,7 +44,7 @@ Main bersama teman dengan mencari ayat secara cepat.
 </p>
 
 <div class="text-center">
-<a href="{{ route('alkitab.multiplayer') }}"
+<a href="{{ route('alkitab.multiplayer-menu') }}"
 class="inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition">
 Main
 </a>

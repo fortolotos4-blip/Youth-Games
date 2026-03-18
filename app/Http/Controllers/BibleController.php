@@ -34,6 +34,11 @@ class BibleController extends Controller
         return view('alkitab.menu');
     }
 
+    public function multiplayerMenu()
+{
+    return view('alkitab.multiplayer-menu');
+}
+
     public function multiplayerLobby()
     {
         return view('alkitab.multiplayer-lobby');
@@ -84,14 +89,17 @@ class BibleController extends Controller
 
     $roomId = DB::table('bible_rooms')->insertGetId([
         'code' => $code,
-        'status' => 'waiting'
+        'status' => 'waiting',
+        'max_players' => $request->max_players,
+        'created_at' => now()
     ]);
 
     $playerId = DB::table('bible_players')->insertGetId([
         'room_id' => $roomId,
         'name' => $request->name,
         'score' => 0,
-        'is_host' => true
+        'is_host' => true,
+        'created_at' => now()
     ]);
 
     session([
@@ -99,31 +107,190 @@ class BibleController extends Controller
         'player_name' => $request->name
     ]);
 
-    return redirect("/alkitab/multiplayer/play/$code");
+    // 🔥 FIX: ke lobby, bukan play
+    return response()->json([
+        'room_code' => $code
+    ]);
 }
 
-public function joinRoom($code)
+public function joinRoom(Request $request)
 {
-    $room = DB::table('bible_rooms')->where('code', $code)->first();
+    $room = DB::table('bible_rooms')
+        ->where('code', $request->code)
+        ->first();
 
-    if(!$room){
-        return redirect()->back()->with('error', 'Room tidak ditemukan');
+    if (!$room) {
+        return response()->json(['error' => 'Room tidak ditemukan']);
     }
 
-    $name = request()->name ?? session('player_name') ?? 'Player';
+    // 🔥 VALIDASI WAJIB
+    $playerCount = DB::table('bible_players')
+        ->where('room_id', $room->id)
+        ->count();
+
+    if ($room->status !== 'waiting') {
+        return response()->json(['error' => 'Game sudah dimulai']);
+    }
+
+    if ($playerCount >= $room->max_players) {
+        return response()->json(['error' => 'Room penuh']);
+    }
 
     $playerId = DB::table('bible_players')->insertGetId([
         'room_id' => $room->id,
-        'name' => $name,
-        'score' => 0
+        'name' => $request->name,
+        'score' => 0,
+        'is_host' => false,
+        'created_at' => now()
     ]);
 
     session([
         'player_id' => $playerId,
-        'player_name' => $name
+        'player_name' => $request->name
     ]);
 
-    return redirect("/alkitab/multiplayer/play/$code");
+    return response()->json([
+        'success' => true
+    ]);
+}
+
+public function lobby($code)
+{
+    return view('alkitab.multiplayer-lobby', [
+        'roomCode' => $code
+    ]);
+}
+
+public function state($code)
+{
+    $room = DB::table('bible_rooms')
+        ->where('code', $code)
+        ->first();
+
+    $players = DB::table('bible_players')
+        ->where('room_id', $room->id)
+        ->select('id', 'name', 'is_host')
+        ->get();
+
+    return response()->json([
+        'room' => [
+            'code' => $room->code,
+            'status' => $room->status,
+            'max_players' => $room->max_players,
+            'start_time' => $room->start_time
+        ],
+        'players' => $players
+    ]);
+}
+
+public function startGame($code, Request $request)
+{
+    $room = DB::table('bible_rooms')
+        ->where('code', $code)
+        ->first();
+
+    $player = DB::table('bible_players')
+        ->where('room_id', $room->id)
+        ->where('name', $request->player_name)
+        ->first();
+
+    if (!$player || !$player->is_host) {
+        return response()->json(['error' => 'Hanya host']);
+    }
+
+    $count = DB::table('bible_players')
+        ->where('room_id', $room->id)
+        ->count();
+
+    if ($count < 2) {
+        return response()->json(['error' => 'Minimal 2 pemain']);
+    }
+
+    DB::table('bible_rooms')
+        ->where('id', $room->id)
+        ->update([
+            'status' => 'playing',
+            'start_time' => now()->addSeconds(5)
+        ]);
+
+    return response()->json(['success' => true]);
+}
+
+public function answerMultiplayer(Request $request)
+{
+    $room = DB::table('bible_rooms')
+        ->where('code', $request->room_code)
+        ->first();
+
+    $playerId = $request->player_id;
+
+    DB::beginTransaction();
+
+    try {
+
+        // 🔒 LOCK QUESTION
+        $question = DB::table('bible_multiplayer_questions')
+            ->where('room_id', $room->id)
+            ->whereNull('ended_at')
+            ->orderBy('question_order')
+            ->lockForUpdate()
+            ->first();
+
+        if (!$question) {
+            DB::rollBack();
+            return response()->json(['error' => 'No active question']);
+        }
+
+        // ❗ SUDAH ADA YANG MENANG
+        if ($question->answered_by) {
+            DB::rollBack();
+            return response()->json(['correct' => false]);
+        }
+
+        // 🔍 VALIDASI JAWABAN
+        $correct = (int)$request->answer === (int)$question->verse;
+
+        // 📝 SIMPAN JAWABAN
+        DB::table('bible_answers')->insert([
+            'id' => Str::uuid(),
+            'room_id' => $room->id,
+            'player_id' => $playerId,
+            'question_id' => $question->question_id,
+            'answer' => $request->answer,
+            'is_correct' => $correct,
+            'created_at' => now()
+        ]);
+
+        if ($correct) {
+
+            // 🏆 SET PEMENANG (HANYA 1 YANG BISA MASUK SINI)
+            DB::table('bible_multiplayer_questions')
+                ->where('id', $question->id)
+                ->update([
+                    'answered_by' => $playerId,
+                    'ended_at' => now()
+                ]);
+
+            // ➕ TAMBAH SCORE
+            DB::table('bible_players')
+                ->where('id', $playerId)
+                ->increment('score', 10);
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'correct' => $correct
+        ]);
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'error' => 'Server error'
+        ]);
+    }
 }
 
 }

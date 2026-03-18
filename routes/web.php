@@ -166,28 +166,32 @@ Route::prefix('alkitab')->group(function () {
     // MULTIPLAYER
     // ========================
 
-    // lobby
-    Route::get('/multiplayer', [BibleController::class, 'multiplayerLobby'])
-        ->name('alkitab.multiplayer');
+    // ✅ MENU MULTIPLAYER (ENTRY POINT)
+    Route::get('/multiplayer', [BibleController::class, 'multiplayerMenu'])
+        ->name('alkitab.multiplayer.menu');
 
-    // create room
-    Route::post('/multiplayer/create', [BibleController::class, 'createRoom'])
-        ->name('alkitab.multiplayer.create');
+    // ✅ CREATE ROOM
+    Route::post('/multiplayer/create', [BibleController::class, 'createRoom']);
 
-    Route::post('/multiplayer/join/{code}', [BibleController::class, 'joinRoom']);
+    // ✅ JOIN ROOM
+    Route::post('/multiplayer/join', [BibleController::class, 'joinRoom']);
 
-    // play room
-    Route::get('/multiplayer/play/{code}', [BibleController::class, 'multiplayerPlay'])
-        ->name('alkitab.multiplayer.play');
+    // ✅ LOBBY
+    Route::get('/multiplayer/lobby/{code}', [BibleController::class, 'lobby']);
 
-    // polling state
-    Route::get('/multiplayer/state/{code}', [BibleController::class, 'state']);
+    // ✅ LOBBY STATE (polling)
+    Route::get('/multiplayer/lobby-state/{code}', [BibleController::class, 'state']);
 
-    // answer
-    Route::post('/multiplayer/answer', [BibleController::class, 'answerMultiplayer']);
-
-    // start game (host)
+    // ✅ START GAME
     Route::post('/multiplayer/start/{code}', [BibleController::class, 'startGame']);
 
-});
+    // ✅ GAME PLAY
+    Route::get('/multiplayer/game/{code}', [BibleController::class, 'multiplayerPlay']);
 
+    // ✅ GAME STATE (polling)
+    Route::get('/multiplayer/state/{code}', [BibleController::class, 'gameState']);
+
+    // ✅ ANSWER
+    Route::post('/multiplayer/answer', [BibleController::class, 'answerMultiplayer']);
+
+});
