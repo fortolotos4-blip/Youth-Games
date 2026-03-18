@@ -2,26 +2,34 @@
 
 @section('content')
 <div x-data="bibleguessSingle()" x-init="init()"
-     class="min-h-screen bg-gray-100 py-6">
+     class="min-h-screen bg-gray-100 flex justify-center pt-10 sm:pt-14">
 
   <!-- GAME AREA -->
   <div :class="showSummary ? 'pointer-events-none blur-sm' : ''"
      class="w-full max-w-xl p-4 transition">
 
     <!-- RULES -->
-    <div x-show="showRules" class="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div class="bg-white p-6 rounded w-96">
-        <h3 class="text-xl font-bold">Aturan Game</h3>
-        <p class="mt-2 text-sm">
-          Siapkan Alkitab, lalu cari ayat, pasal, atau kitab dari potongan ayat alkitab.
-        </p>
-        <div class="text-right mt-4">
-          <button @click="start()" class="px-3 py-2 bg-green-600 text-white rounded">
-            Mulai
-          </button>
-        </div>
-      </div>
+    <div x-show="showRules"
+    x-transition
+     class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
+
+  <div class="bg-white w-full max-w-md p-6 rounded-xl shadow-lg">
+
+    <h3 class="text-lg sm:text-xl font-bold">Aturan Game</h3>
+
+    <p class="mt-2 text-sm text-gray-600">
+      Siapkan Alkitab, lalu cari ayat, pasal, atau kitab dari potongan ayat alkitab.
+    </p>
+
+    <div class="text-right mt-4">
+      <button @click="start()"
+        class="px-4 py-2 bg-green-600 text-white rounded-lg">
+        Mulai
+      </button>
     </div>
+
+  </div>
+</div>
 
     <!-- MAIN -->
     <div class="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg w-full">
@@ -60,8 +68,8 @@
       </div>
 
       <!-- SOAL DINAMIS -->
-      <div class="text-center mb-4 border-2 border-gray-200 rounded-xl p-4 bg-gray-50"
-     x-show="current">
+      <template x-if="current">
+  <div class="text-center mb-4 border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
 
         <!-- MODE AYAT -->
         <template x-if="mode === 'verse'">
@@ -93,6 +101,7 @@
           "<span x-text="current.verse_text"></span>"
         </div>
       </div>
+</template>
 
       <!-- INPUT -->
       <div class="flex justify-center mt-4">
@@ -203,24 +212,29 @@ function bibleguessSingle(){
     },
 
     start(){
-      this.showRules = false;
-      this.startSessionTimer();
-      this.pickRandomQuestion();
-      this.startTimer();
+    if(!this.showRules) return; // 🔥 cegah double start
+
+    this.showRules = false;
+    this.startSessionTimer();
+    this.pickRandomQuestion();
+    this.startTimer();
     },
 
     pickRandomQuestion(){
-      if(this.availableQuestions.length === 0){
-        this.finishSession();
-        return;
-      }
+  if(this.availableQuestions.length === 0){
+    this.current = null;
+    this.finishSession();
+    return;
+  }
 
-      const i = Math.floor(Math.random() * this.availableQuestions.length);
-      this.current = this.availableQuestions[i];
+  const i = Math.floor(Math.random() * this.availableQuestions.length);
 
-      this.answer = '';
-      this.timeLeft = this.current.time_limit_seconds ?? 20;
-    },
+  this.current = this.availableQuestions[i];
+
+  this.answer = '';
+  this.inputState = '';
+  this.timeLeft = this.current.time_limit_seconds ?? 20;
+},
 
     startTimer(){
       if(this.timerId) clearInterval(this.timerId);
