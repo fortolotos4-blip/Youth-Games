@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gray-100 flex items-center justify-center">
+<div class="min-h-screen bg-gray-100 py-10">
 
 <div class="max-w-5xl w-full py-10 px-6">
 

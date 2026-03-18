@@ -2,7 +2,7 @@
 
 @section('content')
 <div x-data="bibleguessSingle()" x-init="init()"
-     class="min-h-screen flex items-center justify-center bg-gray-100">
+     class="min-h-screen bg-gray-100 py-6">
 
   <!-- GAME AREA -->
   <div :class="showSummary ? 'pointer-events-none blur-sm' : ''"
@@ -223,7 +223,7 @@ function bibleguessSingle(){
     },
 
     startTimer(){
-      clearInterval(this.timerId);
+      if(this.timerId) clearInterval(this.timerId);
       this.timerId = setInterval(()=>{
         this.timeLeft--;
         if(this.timeLeft <= 0){
@@ -327,9 +327,19 @@ function bibleguessSingle(){
     },
 
     onTimeout(){
-      this.attempts.push({correct:false});
-      this.pickRandomQuestion();
-      this.startTimer();
+    if(this.isSubmitting) return;
+
+    this.attempts.push({correct:false});
+
+    this.answer = '';
+    this.inputState = '';
+
+    clearInterval(this.timerId);
+
+    this.pickRandomQuestion();
+    this.startTimer();
+
+    this.$refs.answerInput?.focus();
     },
 
     finishSession(){
