@@ -54,7 +54,7 @@
      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
     <div class="text-4xl mb-3">🧩</div>
     <h3 class="font-bold text-lg mb-1">Puzzle Misterius</h3>
-    <p class="text-sm text-gray-500">Susun kepingan gambar menjadi gambar yang indah</p>
+    <p class="text-sm text-gray-500">Susun kepingan gambar menjadi gambar yang utuh</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
       Main →
     </span>
@@ -76,11 +76,22 @@
      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
     <div class="text-4xl mb-3">🎵</div>
     <h3 class="font-bold text-lg mb-1">Sambung Lagu</h3>
-    <p class="text-sm text-gray-500">Sambung lagu dengan kalimat yang ada</p>
+    <p class="text-sm text-gray-500">menyanyikan lagu rohani dengan kalimat acak</p>
     <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
       Mulai →
     </span>
   </a>
 </div>
 
+<!-- CARI AYAT ALKITAB -->
+  <a href="{{ route('song.menu') }}"
+     class="group bg-white rounded-xl p-6 shadow hover:shadow-xl transition transform hover:-translate-y-1">
+    <div class="text-4xl mb-3">📖</div>
+    <h3 class="font-bold text-lg mb-1">Cari Ayat</h3>
+    <p class="text-sm text-gray-500">Temukan ayat alkitab dengan cepat</p>
+    <span class="mt-4 inline-block text-indigo-600 text-sm font-semibold group-hover:underline">
+      Mulai →
+    </span>
+  </a>
+</div>
 @endsection

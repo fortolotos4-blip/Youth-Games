@@ -9,6 +9,8 @@ use App\Http\Controllers\TtsController;
 use App\Http\Controllers\TtsRoomController;
 use App\Http\Controllers\MultiplayerController;
 use App\Http\Controllers\SongController;
+use App\Http\Controllers\BibleController;
+
 /*
 |--------------------------------------------------------------------------
 | GENERAL
@@ -139,4 +141,28 @@ Route::prefix('song')->name('song.')->group(function(){
 
 });
 
+/*
+|--------------------------------------------------------------------------
+| AYAT ALKITAB
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('alkitab')->group(function () {
+
+    Route::get('/menu', [BibleController::class, 'menu'])
+        ->name('alkitab.menu');
+
+    Route::get('/single', [BibleController::class, 'index'])
+        ->name('alkitab.single');
+
+    Route::post('/single/answer', [BibleController::class, 'checkAnswer'])
+        ->name('alkitab.single.answer');
+
+    Route::get('/multiplayer', [BibleController::class, 'multiplayerLobby'])
+        ->name('alkitab.multiplayer');
+
+    Route::get('/multiplayer/play/{code}', [BibleController::class, 'multiplayerPlay'])
+        ->name('alkitab.multiplayer.play');
+
+});
 
