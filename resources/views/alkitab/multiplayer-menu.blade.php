@@ -101,6 +101,7 @@ function createRoom(){
       localStorage.setItem('player_name', this.player_name);
 
       fetch('/alkitab/multiplayer/create', {
+        credentials: 'same-origin',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,6 +145,7 @@ function joinRoom(){
       localStorage.setItem('player_name', this.player_name);
 
       fetch('/alkitab/multiplayer/join', {
+        credentials: 'same-origin',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

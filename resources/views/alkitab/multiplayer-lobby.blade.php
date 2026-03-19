@@ -92,7 +92,7 @@ function multiplayerLobby(roomCode){
       this.pollId = setInterval(() => {
         this.fetchLobby();
         this.updateCountdown();
-      }, 1000);
+      }, 2000);
     },
 
     fetchLobby(){
