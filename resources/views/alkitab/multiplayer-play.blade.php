@@ -125,68 +125,111 @@ function multiplayerGame(code){
     isTimeout: false,
 
     poller: null,
+    isFetching: false,
 
     init(){
       this.fetchState();
 
       this.poller = setInterval(() => {
-        this.fetchState();
-      }, 1000);
+        if(!this.isFetching){
+          this.fetchState();
+        }
+      }, 2000);
     },
 
-    fetchState(){
-      fetch(`/alkitab/multiplayer/state/${this.roomCode}`)
-        .then(r => r.json())
-        .then(data => {
+    async fetchState(){
 
-          this.players = data.players;
-          this.question = data.question;
-          this.timeLeft = data.time_left;
-          this.roomStatus = data.room_status;
+      this.isFetching = true;
 
-          this.isTimeout = false;
+      try {
 
-          // STATUS
-          if(data.answered_by){
-            this.status = 'Sudah dijawab';
-          } else if(this.timeLeft <= 0){
-            this.status = 'Waktu habis';
-          } else {
-            this.status = 'Cepat jawab!';
-          }
-
-          // LOCK
-          if(data.answered_by){
-            this.isLocked = true;
-            this.lastWinner = data.answered_by;
-
-            const winner = this.players.find(p => p.id === data.answered_by);
-            this.lastWinnerName = winner ? winner.name : '';
-          } else {
-            this.isLocked = false;
-            this.lastWinner = null;
-            this.lastWinnerName = '';
-          }
-
-          if(this.timeLeft <= 0){
-            this.isTimeout = true;
-          }
-
-          // AUTO FOCUS
-          if(!this.isLocked){
-            this.$nextTick(() => {
-              this.$refs.input?.focus();
-            });
-          }
-
+        const res = await fetch(`/alkitab/multiplayer/state/${this.roomCode}`, {
+          credentials: 'same-origin'
         });
+
+        const text = await res.text();
+
+        // ❗ HANDLE RESPONSE KOSONG
+        if(!text){
+          console.warn('Empty response');
+          return;
+        }
+
+        let data;
+
+        try {
+          data = JSON.parse(text);
+        } catch(e){
+          console.error('Invalid JSON:', text);
+          return;
+        }
+
+        // ❗ HANDLE ERROR DARI BACKEND
+        if(data.error){
+          console.warn(data.error);
+          return;
+        }
+
+        // ✅ UPDATE STATE
+        this.players = data.players || [];
+        this.question = data.question;
+        this.timeLeft = data.time_left ?? 0;
+        this.roomStatus = data.room_status ?? 'waiting';
+
+        this.isTimeout = false;
+
+        // ✅ STATUS
+        if(!this.question){
+          this.status = 'Menunggu soal...';
+          return;
+        }
+
+        if(data.answered_by){
+          this.status = 'Sudah dijawab';
+        } else if(this.timeLeft <= 0){
+          this.status = 'Waktu habis';
+        } else {
+          this.status = 'Cepat jawab!';
+        }
+
+        // ✅ LOCK
+        if(data.answered_by){
+          this.isLocked = true;
+          this.lastWinner = data.answered_by;
+
+          const winner = this.players.find(p => p.id === data.answered_by);
+          this.lastWinnerName = winner ? winner.name : '';
+        } else {
+          this.isLocked = false;
+          this.lastWinner = null;
+          this.lastWinnerName = '';
+        }
+
+        if(this.timeLeft <= 0){
+          this.isTimeout = true;
+        }
+
+        // AUTO FOCUS
+        if(!this.isLocked){
+          this.$nextTick(() => {
+            this.$refs.input?.focus();
+          });
+        }
+
+      } catch (err) {
+        console.warn('Fetch error:', err);
+      } finally {
+        this.isFetching = false;
+      }
     },
 
     submit(){
+
       if(this.isLocked || !this.answer) return;
 
       fetch(`/alkitab/multiplayer/answer`, {
         method: 'POST',
+        credentials: 'same-origin',
         headers:{
           'Content-Type':'application/json',
           'X-CSRF-TOKEN':'{{ csrf_token() }}'
