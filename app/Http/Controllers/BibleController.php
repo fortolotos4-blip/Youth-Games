@@ -85,6 +85,11 @@ class BibleController extends Controller
 
     public function createRoom(Request $request)
 {
+    $request->validate([
+        'name' => 'required|string|max:50',
+        'max_players' => 'required|integer|min:2|max:4'
+    ]);
+
     $code = strtoupper(Str::random(5));
 
     $roomId = DB::table('bible_rooms')->insertGetId([
@@ -115,6 +120,12 @@ class BibleController extends Controller
 
 public function joinRoom(Request $request)
 {
+    // ✅ DI SINI
+    $request->validate([
+        'name' => 'required|string|max:50',
+        'code' => 'required|string'
+    ]);
+
     $room = DB::table('bible_rooms')
         ->where('code', $request->code)
         ->first();
@@ -167,6 +178,11 @@ public function state($code)
         ->where('code', $code)
         ->first();
 
+        // ✅ TARUH DI SINI (WAJIB)
+    if (!$room) {
+        return response()->json(['error' => 'Room tidak ditemukan']);
+    }
+
     $players = DB::table('bible_players')
         ->where('room_id', $room->id)
         ->select('id', 'name', 'is_host')
@@ -187,9 +203,15 @@ public function startGame($code, Request $request)
 {
     $room = DB::table('bible_rooms')->where('code', $code)->first();
 
+    if (!$room) {
+    return response()->json(['error' => 'Room tidak ditemukan']);
+}
+
+    $playerId = session('player_id');
+
     $player = DB::table('bible_players')
         ->where('room_id', $room->id)
-        ->where('name', $request->player_name)
+        ->where('id', $playerId)
         ->first();
 
     if (!$player || !$player->is_host) {
@@ -204,15 +226,16 @@ public function startGame($code, Request $request)
         return response()->json(['error' => 'Minimal 2 pemain']);
     }
 
-    // ✅ update room
+    // START GAME
     DB::table('bible_rooms')
         ->where('id', $room->id)
         ->update([
             'status' => 'playing',
-            'start_time' => now()
+            'start_time' => now(),
+            'end_time' => now()->addMinutes(5)
         ]);
 
-    // ✅ INSERT SOAL PERTAMA
+    // INSERT SOAL PERTAMA
     $q = DB::table('bible_questions')->inRandomOrder()->first();
 
     DB::table('bible_multiplayer_questions')->insert([
@@ -223,8 +246,6 @@ public function startGame($code, Request $request)
         'chapter' => $q->chapter,
         'verse' => $q->verse,
         'verse_text' => $q->verse_text,
-        'answered_by' => null,
-        'ended_at' => null,
         'created_at' => now()
     ]);
 
@@ -250,12 +271,26 @@ public function gameState($code)
         ->latest()
         ->first();
 
-    // ✅ TIMER PAKAI ROOM
+    // ✅ TIMER SOAL (FIXED)
     $timeLeft = 0;
-
-    if ($room->start_time) {
-        $elapsed = now()->diffInSeconds($room->start_time);
+    if ($question && $question->created_at) {
+        $elapsed = now()->diffInSeconds($question->created_at);
         $timeLeft = max(20 - $elapsed, 0);
+    }
+
+    // ✅ TIMER SESSION
+    $sessionLeft = 0;
+    if ($room->end_time) {
+        $sessionLeft = max(now()->diffInSeconds($room->end_time, false), 0);
+    }
+
+    // 🏁 AUTO FINISH (TIME)
+    if ($sessionLeft <= 0 && $room->status === 'playing') {
+        DB::table('bible_rooms')
+            ->where('id', $room->id)
+            ->where('status', 'playing')
+            ->update(['status' => 'finished']);
+        $room->status = 'finished';
     }
 
     return response()->json([
@@ -263,23 +298,45 @@ public function gameState($code)
         'players' => $players,
         'question' => $question,
         'time_left' => $timeLeft,
-        'answered_by' => $question->answered_by ?? null
+        'session_left' => $sessionLeft,
+        'answered_by' => $question ? $question->answered_by : null
     ]);
 }
 
 public function answerMultiplayer(Request $request)
 {
+    // ✅ 1. VALIDASI INPUT
+    $request->validate([
+        'room_code' => 'required|string',
+        'answer' => 'required'
+    ]);
+
+    // ✅ 2. AMBIL ROOM
     $room = DB::table('bible_rooms')
         ->where('code', $request->room_code)
         ->first();
 
-    $playerId = $request->player_id;
+    if (!$room || $room->status !== 'playing') {
+        return response()->json(['error' => 'Game tidak aktif']);
+    }
+
+    $playerId = session('player_id');
+
+    // ✅ 3. VALIDASI PLAYER
+    $player = DB::table('bible_players')
+        ->where('id', $playerId)
+        ->where('room_id', $room->id)
+        ->first();
+
+    if (!$player) {
+        return response()->json(['error' => 'Player tidak valid']);
+    }
 
     DB::beginTransaction();
 
     try {
 
-        // 🔒 LOCK QUESTION
+        // 🔒 4. LOCK QUESTION (ANTI RACE CONDITION)
         $question = DB::table('bible_multiplayer_questions')
             ->where('room_id', $room->id)
             ->whereNull('ended_at')
@@ -292,16 +349,24 @@ public function answerMultiplayer(Request $request)
             return response()->json(['error' => 'No active question']);
         }
 
-        // ❗ SUDAH ADA YANG MENANG
+        // ❗ SUDAH ADA PEMENANG
         if ($question->answered_by) {
             DB::rollBack();
             return response()->json(['correct' => false]);
         }
 
-        // 🔍 VALIDASI JAWABAN
+        // ⏱ 5. CEK TIMEOUT (ANTI CHEAT)
+        $elapsed = now()->diffInSeconds($question->created_at);
+
+        if ($elapsed > 20) {
+            DB::rollBack();
+            return response()->json(['error' => 'Waktu habis']);
+        }
+
+        // ✅ 6. VALIDASI JAWABAN
         $correct = (int)$request->answer === (int)$question->verse;
 
-        // 📝 SIMPAN JAWABAN
+        // 📝 7. SIMPAN JAWABAN
         DB::table('bible_answers')->insert([
             'id' => Str::uuid(),
             'room_id' => $room->id,
@@ -314,7 +379,7 @@ public function answerMultiplayer(Request $request)
 
         if ($correct) {
 
-            // 🏆 SET PEMENANG
+            // 🏆 SET WINNER
             DB::table('bible_multiplayer_questions')
                 ->where('id', $question->id)
                 ->update([
@@ -327,45 +392,61 @@ public function answerMultiplayer(Request $request)
                 ->where('id', $playerId)
                 ->increment('score', 10);
 
-            // ✅ NEXT QUESTION (WAJIB DI SINI)
-            $next = DB::table('bible_questions')
-                ->inRandomOrder()
-                ->first();
+            // 🔢 LIMIT SOAL (MAX 20)
+            $count = DB::table('bible_multiplayer_questions')
+                ->where('room_id', $room->id)
+                ->count();
 
-            DB::table('bible_multiplayer_questions')->insert([
-                'id' => Str::uuid(),
-                'room_id' => $room->id,
-                'question_id' => $next->id,
-                'book' => $next->book,
-                'chapter' => $next->chapter,
-                'verse' => $next->verse,
-                'verse_text' => $next->verse_text,
-                'answered_by' => null,
-                'ended_at' => null,
-                'created_at' => now()
-            ]);
+            if ($count >= 20) {
 
-            // ✅ RESET TIMER
-            DB::table('bible_rooms')
-                ->where('id', $room->id)
-                ->update([
-                    'start_time' => now()
-                ]);
+                DB::table('bible_rooms')
+                    ->where('id', $room->id)
+                    ->update(['status' => 'finished']);
+
+            } else {
+
+                // ❌ AVOID DUPLIKAT
+                $used = DB::table('bible_multiplayer_questions')
+                    ->where('room_id', $room->id)
+                    ->pluck('question_id');
+
+                $next = DB::table('bible_questions')
+                    ->whereNotIn('id', $used)
+                    ->inRandomOrder()
+                    ->first();
+
+                if ($next) {
+
+                    DB::table('bible_multiplayer_questions')->insert([
+                        'id' => Str::uuid(),
+                        'room_id' => $room->id,
+                        'question_id' => $next->id,
+                        'book' => $next->book,
+                        'chapter' => $next->chapter,
+                        'verse' => $next->verse,
+                        'verse_text' => $next->verse_text,
+                        'created_at' => now()
+                    ]);
+
+                } else {
+
+                    // 🏁 HABIS SOAL
+                    DB::table('bible_rooms')
+                        ->where('id', $room->id)
+                        ->update(['status' => 'finished']);
+                }
+            }
         }
 
         DB::commit();
 
-        return response()->json([
-            'correct' => $correct
-        ]);
+        return response()->json(['correct' => $correct]);
 
     } catch (\Exception $e) {
 
         DB::rollBack();
 
-        return response()->json([
-            'error' => 'Server error'
-        ]);
+        return response()->json(['error' => 'Server error']);
     }
 }
 
