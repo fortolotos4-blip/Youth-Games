@@ -109,12 +109,6 @@
           </span>
         </template>
 
-        <template x-if="isTimeout">
-          <span class="text-red-500">
-            ⏱ Waktu habis!
-          </span>
-        </template>
-
       </div>
 
     </div> <!-- ✅ END CARD -->
@@ -183,7 +177,7 @@ function multiplayerGame(code){
         if(!this.isFetching){
           this.fetchState();
         }
-      }, 2000);
+      }, 1000);
       // ✅ CLEANUP SAAT PAGE DITINGGALKAN
   window.addEventListener('beforeunload', () => {
     clearInterval(this.poller);
@@ -250,7 +244,7 @@ function multiplayerGame(code){
     } else if(this.timeLeft <= 0){
       this.status = 'Waktu habis';
     } else {
-      this.status = 'Cepat jawab!';
+      this.status = '';
     }
 
     // ✅ LOCK LOGIC (FIXED)

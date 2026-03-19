@@ -13,7 +13,7 @@ class BibleController extends Controller
     public function index()
     {
         $questions = BibleQuestion::inRandomOrder()
-            ->limit(20)
+            ->limit(100)
             ->get()
             ->map(function($q){
                 return [
@@ -271,11 +271,79 @@ public function gameState($code)
         ->latest()
         ->first();
 
-    // ✅ TIMER SOAL (FIXED)
+    // ✅ TIMER SOAL
     $timeLeft = 0;
     if ($question && $question->created_at) {
-        $elapsed = now()->diffInSeconds($question->created_at);
-        $timeLeft = max(20 - $elapsed, 0);
+        $elapsed = now()->diffInSeconds(Carbon::parse($question->created_at));
+        $timeLeft = max(30 - $elapsed, 0);
+    }
+
+    // 🔥 ⬇️ TARUH DI SINI (SETELAH TIMER)
+    if ($question && $timeLeft <= 0 && !$question->answered_by) {
+
+        // ✅ AKHIRI SOAL
+        DB::table('bible_multiplayer_questions')
+            ->where('id', $question->id)
+            ->update([
+                'ended_at' => now()
+            ]);
+
+        // 🔢 HITUNG SOAL
+        $count = DB::table('bible_multiplayer_questions')
+            ->where('room_id', $room->id)
+            ->count();
+
+        if ($count >= 20) {
+
+            DB::table('bible_rooms')
+                ->where('id', $room->id)
+                ->update(['status' => 'finished']);
+
+            $room->status = 'finished';
+
+        } else {
+
+            $used = DB::table('bible_multiplayer_questions')
+                ->where('room_id', $room->id)
+                ->pluck('question_id');
+
+            $next = DB::table('bible_questions')
+                ->whereNotIn('id', $used)
+                ->inRandomOrder()
+                ->first();
+
+            if ($next) {
+                DB::table('bible_multiplayer_questions')->insert([
+                    'id' => Str::uuid(),
+                    'room_id' => $room->id,
+                    'question_id' => $next->id,
+                    'book' => $next->book,
+                    'chapter' => $next->chapter,
+                    'verse' => $next->verse,
+                    'verse_text' => $next->verse_text,
+                    'created_at' => now()
+                ]);
+            } else {
+                DB::table('bible_rooms')
+                    ->where('id', $room->id)
+                    ->update(['status' => 'finished']);
+
+                $room->status = 'finished';
+            }
+        }
+
+        // 🔥 REFRESH QUESTION BARU (WAJIB)
+        $question = DB::table('bible_multiplayer_questions')
+            ->where('room_id', $room->id)
+            ->whereNull('ended_at')
+            ->latest()
+            ->first();
+
+        // reset timer
+        if ($question && $question->created_at) {
+            $elapsed = now()->diffInSeconds(Carbon::parse($question->created_at));
+            $timeLeft = max(30 - $elapsed, 0);
+        }
     }
 
     // ✅ TIMER SESSION
@@ -290,6 +358,7 @@ public function gameState($code)
             ->where('id', $room->id)
             ->where('status', 'playing')
             ->update(['status' => 'finished']);
+
         $room->status = 'finished';
     }
 
