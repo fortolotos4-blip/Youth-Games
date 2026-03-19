@@ -216,6 +216,47 @@ public function startGame($code, Request $request)
     return response()->json(['success' => true]);
 }
 
+public function gameState($code)
+{
+    $room = DB::table('bible_rooms')
+        ->where('code', $code)
+        ->first();
+
+    if (!$room) {
+        return response()->json(['error' => 'Room not found']);
+    }
+
+    // 🔥 ambil soal aktif
+    $question = DB::table('bible_multiplayer_questions')
+        ->where('room_id', $room->id)
+        ->whereNull('ended_at')
+        ->orderBy('question_order')
+        ->first();
+
+    // 🔥 players
+    $players = DB::table('bible_players')
+        ->where('room_id', $room->id)
+        ->select('id', 'name', 'score')
+        ->get();
+
+    // 🔥 hitung waktu
+    $timeLeft = 0;
+
+    if ($question && $question->started_at) {
+        $timeLimit = 20; // atau ambil dari question
+        $elapsed = now()->diffInSeconds($question->started_at);
+        $timeLeft = max($timeLimit - $elapsed, 0);
+    }
+
+    return response()->json([
+        'room_status' => $room->status,
+        'players' => $players,
+        'question' => $question,
+        'time_left' => $timeLeft,
+        'answered_by' => $question->answered_by ?? null
+    ]);
+}
+
 public function answerMultiplayer(Request $request)
 {
     $room = DB::table('bible_rooms')
