@@ -20,7 +20,7 @@
     </h1>
 
     <p class="text-gray-300 mb-8 text-sm leading-relaxed">
-      Asah pengetahuan imanmu melalui berbagai permainan
+      Asah pengetahuan imanmu melalui permainan
       yang menantang dan menyenangkan.
     </p>
 
@@ -39,7 +39,7 @@
 
     <!-- FOOTER -->
     <p class="mt-6 text-xs text-gray-400">
-      © {{ date('Y') }} Game Rohani made by 💗 from Youth people
+      © {{ date('Y') }} made by ❤️ from Youth People
     </p>
 
   </div>
