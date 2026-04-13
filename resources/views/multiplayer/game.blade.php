@@ -5,7 +5,7 @@
   x-data="multiplayerGame('{{ $roomCode }}')"
   x-init="init()"
   x-cloak
-  class="relative max-w-6xl mx-auto p-4"
+  class="relative max-w-6xl mx-auto px-2 py-4 sm:px-4"
 >
 
   <!-- PLAYER POSITIONS -->
@@ -45,7 +45,7 @@
   <!-- CENTER GAME -->
   <div class="absolute inset-0 flex items-center justify-center 
             px-4 pt-28 pb-28 sm:pt-24 sm:pb-24 pointer-events-none">
-    <div class="bg-white rounded-lg shadow p-3 w-full max-w-xs sm:max-w-sm md:max-w-md pointer-events-auto">
+    <div class="bg-white rounded-lg shadow p-3 w-full max-w-full sm:max-w-md md:max-w-lg pointer-events-auto">
 
       <!-- TIMERS -->
       <div class="flex justify-between text-xs font-semibold mb-2">
@@ -57,7 +57,7 @@
 
       <!-- IMAGE -->
       <div class="flex justify-center mb-4" x-show="question">
-        <img :src="imageSrc" class="max-h-[160px] sm:max-h-[200px] md:max-h-[240px] object-contain rounded">
+        <img :src="imageSrc" class="w-full max-h-[200px] sm:max-h-[260px] md:max-h-[320px] object-contain">
       </div>
 
       <!-- ANSWER SLOTS -->
