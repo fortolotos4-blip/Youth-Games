@@ -346,10 +346,10 @@ playerSticker(pid) {
   }
 }
 
-.top-left{top:12px;left:12px}
-.top-right{top:12px;right:12px}
-.bottom-left{bottom:12px;left:12px}
-.bottom-right{bottom:12px;right:12px}
+.top-left{top:6px;left:6px}
+.top-right{top:6px;right:6px}
+.bottom-left{bottom:6px;left:6px}
+.bottom-right{bottom:6px;right:6px}
 
 .active-turn{
   box-shadow:0 0 0 3px rgba(99,102,241,.4);
