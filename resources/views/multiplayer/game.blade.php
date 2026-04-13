@@ -44,7 +44,7 @@
 
   <!-- CENTER GAME -->
   <div class="absolute inset-0 flex items-center justify-center 
-            px-4 pt-24 pb-24 pointer-events-none">
+            px-4 pt-28 pb-28 sm:pt-24 sm:pb-24 pointer-events-none">
     <div class="bg-white rounded-lg shadow p-3 w-full max-w-xs sm:max-w-sm md:max-w-md pointer-events-auto">
 
       <!-- TIMERS -->
