@@ -9,7 +9,7 @@
 >
 
   <!-- PLAYER POSITIONS -->
-  <div class="relative h-[520px]">
+  <div class="relative min-h-[650px] sm:min-h-[700px] md:min-h-[750px]">
     <template x-for="(p, i) in players" :key="p.id">
       <div
         class="player-card relative"
@@ -43,8 +43,9 @@
   </div>
 
   <!-- CENTER GAME -->
-  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <div class="bg-white rounded-lg shadow p-4 w-full max-w-md pointer-events-auto">
+  <div class="absolute inset-0 flex items-center justify-center 
+            px-4 pt-24 pb-24 pointer-events-none">
+    <div class="bg-white rounded-lg shadow p-3 w-full max-w-xs sm:max-w-sm md:max-w-md pointer-events-auto">
 
       <!-- TIMERS -->
       <div class="flex justify-between text-xs font-semibold mb-2">
@@ -56,7 +57,7 @@
 
       <!-- IMAGE -->
       <div class="flex justify-center mb-4" x-show="question">
-        <img :src="imageSrc" class="max-h-[240px] object-contain rounded">
+        <img :src="imageSrc" class="max-h-[160px] sm:max-h-[200px] md:max-h-[240px] object-contain rounded">
       </div>
 
       <!-- ANSWER SLOTS -->
@@ -332,16 +333,24 @@ playerSticker(pid) {
 <style>
 .player-card{
   position:absolute;
-  width:140px;
-  padding:8px;
-  border-radius:10px;
-  border:2px solid;
-  font-size:12px;
+  width:95px;
+  padding:6px;
+  font-size:10px;
 }
-.top-left{top:0;left:0}
-.top-right{top:0;right:0}
-.bottom-left{bottom:0;left:0}
-.bottom-right{bottom:0;right:0}
+
+@media (min-width: 640px){
+  .player-card{
+    width:130px;
+    padding:8px;
+    font-size:12px;
+  }
+}
+
+.top-left{top:12px;left:12px}
+.top-right{top:12px;right:12px}
+.bottom-left{bottom:12px;left:12px}
+.bottom-right{bottom:12px;right:12px}
+
 .active-turn{
   box-shadow:0 0 0 3px rgba(99,102,241,.4);
 }
