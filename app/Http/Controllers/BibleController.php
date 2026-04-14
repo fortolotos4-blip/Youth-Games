@@ -436,17 +436,20 @@ public function answerMultiplayer(Request $request)
         $correct = (int)$request->answer === (int)$question->verse;
 
         // 📝 7. SIMPAN JAWABAN
-        DB::table('bible_answers')->insert([
-            'id' => Str::uuid(),
-            'room_id' => $room->id,
-            'player_id' => $playerId,
-            'question_id' => $question->question_id,
-            'answer' => $request->answer,
-            'is_correct' => $correct,
-            'created_at' => now()
-        ]);
+        DB::table('bible_answers')->updateOrInsert(
+    [
+        'room_id' => $room->id,
+        'player_id' => $playerId,
+        'question_id' => $question->question_id
+    ],
+    [
+        'answer' => $request->answer,
+        'is_correct' => $correct,
+        'updated_at' => now()
+    ]
+);
 
-        if ($correct) {
+        if ($correct && !$question->answered_by) {
 
             // 🏆 SET WINNER
             DB::table('bible_multiplayer_questions')
