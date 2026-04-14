@@ -9,7 +9,7 @@
 >
 
   <!-- PLAYER POSITIONS -->
-  <div class="relative min-h-[520px] sm:min-h-[600px] md:min-h-[700px]">
+  <div class="relative min-h-[530px] sm:min-h-[600px] md:min-h-[700px]">
     <template x-for="(p, i) in players" :key="p.id">
       <div
         class="player-card relative"
