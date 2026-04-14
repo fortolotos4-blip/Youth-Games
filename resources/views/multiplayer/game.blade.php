@@ -44,6 +44,7 @@
 
   <!-- CENTER GAME -->
   <div class="absolute left-0 right-0 flex items-center justify-center 
+    max-h-[80vh] overflow-hidden
     px-2 sm:px-4 pointer-events-none"
     :class="{
       'top-20 bottom-20': players.length <= 2,
