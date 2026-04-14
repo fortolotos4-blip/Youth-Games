@@ -275,7 +275,7 @@ public function gameState($code)
     $timeLeft = 0;
     if ($question && $question->created_at) {
         $elapsed = now()->diffInSeconds(Carbon::parse($question->created_at));
-        $timeLeft = max(30 - $elapsed, 0);
+        $timeLeft = max(60 - $elapsed, 0);
     }
 
     // 🔥 ⬇️ TARUH DI SINI (SETELAH TIMER)
@@ -342,7 +342,7 @@ public function gameState($code)
         // reset timer
         if ($question && $question->created_at) {
             $elapsed = now()->diffInSeconds(Carbon::parse($question->created_at));
-            $timeLeft = max(30 - $elapsed, 0);
+            $timeLeft = max(60 - $elapsed, 0);
         }
     }
 
