@@ -61,9 +61,12 @@
       </div>
 
       <!-- IMAGE -->
-      <div class="flex justify-center mb-4" x-show="question">
-        <img :src="imageSrc" class="w-full max-h-[200px] sm:max-h-[260px] md:max-h-[320px] object-contain">
-      </div>
+      <div class="w-full mb-4" x-show="question">
+      <img 
+        :src="imageSrc" 
+        class="w-full h-[220px] sm:h-[280px] md:h-[340px] object-cover rounded"
+      >
+    </div>
 
       <!-- ANSWER SLOTS -->
       <div class="flex justify-center gap-1 mb-3">
