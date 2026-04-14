@@ -275,7 +275,7 @@ public function gameState($code)
     $timeLeft = 0;
     if ($question && $question->created_at) {
         $elapsed = now()->diffInSeconds(Carbon::parse($question->created_at));
-        $timeLeft = max(60 - $elapsed, 0);
+        $timeLeft = max(50 - $elapsed, 0);
     }
 
     // 🔥 ⬇️ TARUH DI SINI (SETELAH TIMER)
@@ -342,7 +342,7 @@ public function gameState($code)
         // reset timer
         if ($question && $question->created_at) {
             $elapsed = now()->diffInSeconds(Carbon::parse($question->created_at));
-            $timeLeft = max(60 - $elapsed, 0);
+            $timeLeft = max(50 - $elapsed, 0);
         }
     }
 
@@ -427,7 +427,7 @@ public function answerMultiplayer(Request $request)
         // ⏱ 5. CEK TIMEOUT (ANTI CHEAT)
         $elapsed = now()->diffInSeconds($question->created_at);
 
-        if ($elapsed > 20) {
+        if ($elapsed > 50) {
             DB::rollBack();
             return response()->json(['error' => 'Waktu habis']);
         }
