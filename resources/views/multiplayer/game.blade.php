@@ -43,13 +43,13 @@
   </div>
 
   <!-- CENTER GAME -->
-  <div class="absolute inset-0 flex items-center justify-center 
-            px-2 sm:px-4 pointer-events-none"
-            :class="{
-            'pt-20 pb-20': players.length <= 2,
-            'pt-24 pb-24': players.length == 3,
-            'pt-32 pb-32': players.length >= 4
-          }">
+  <div class="absolute left-0 right-0 flex items-center justify-center 
+    px-2 sm:px-4 pointer-events-none"
+    :class="{
+      'top-20 bottom-20': players.length <= 2,
+      'top-24 bottom-24': players.length == 3,
+      'top-32 bottom-32': players.length >= 4
+    }">
     <div class="bg-white rounded-lg shadow p-3 w-full max-w-full sm:max-w-md md:max-w-lg pointer-events-auto">
 
       <!-- TIMERS -->
