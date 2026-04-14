@@ -444,8 +444,7 @@ public function answerMultiplayer(Request $request)
     ],
     [
         'answer' => $request->answer,
-        'is_correct' => $correct,
-        'updated_at' => now()
+        'is_correct' => $correct
     ]
 );
 
