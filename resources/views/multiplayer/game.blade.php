@@ -44,7 +44,7 @@
 
   <!-- CENTER GAME -->
   <div class="absolute inset-0 flex items-center justify-center 
-            px-4 pt-28 pb-28 sm:pt-24 sm:pb-24 pointer-events-none"
+            px-2 sm:px-4 pointer-events-none"
             :class="{
             'pt-8 pb-8': players.length <= 2,
             'pt-10 pb-10': players.length == 3,
