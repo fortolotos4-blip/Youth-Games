@@ -515,7 +515,9 @@ public function answerMultiplayer(Request $request)
 
         DB::rollBack();
 
-        return response()->json(['error' => 'Server error']);
+        return response()->json([
+    'error' => $e->getMessage()
+]);
     }
 }
 
