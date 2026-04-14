@@ -46,9 +46,9 @@
   <div class="absolute inset-0 flex items-center justify-center 
             px-2 sm:px-4 pointer-events-none"
             :class="{
-            'pt-12 pb-12': players.length <= 2,
-            'pt-16 pb-16': players.length == 3,
-            'pt-16 pb-16 sm:pt-14 sm:pb-14': players.length >= 4
+            'pt-20 pb-20': players.length <= 2,
+            'pt-24 pb-24': players.length == 3,
+            'pt-32 pb-32': players.length >= 4
           }">
     <div class="bg-white rounded-lg shadow p-3 w-full max-w-full sm:max-w-md md:max-w-lg pointer-events-auto">
 
